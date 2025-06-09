@@ -4,70 +4,67 @@ import 'package:flutter_quiz_1/questions_screen.dart';
 import 'package:flutter_quiz_1/start_screen.dart';
 import 'package:flutter_quiz_1/results_screen.dart';
 
+enum ActiveScreen { start, questions, results }
+
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
 
   @override
-  State<Quiz> createState() {
-    return _QuizState();
-  }
+  State<Quiz> createState() => _QuizState();
 }
 
 class _QuizState extends State<Quiz> {
-  var activeScreen = 'start-screen';
+  ActiveScreen activeScreen = ActiveScreen.start;
   List<String> selectedAnswers = [];
 
-  // @override
-  // void initState() {
-  //   activeScreen = StartScreen(switchScreen);
-  //   super.initState();
-  // }
-
-  void switchScreen() {
+  void switchToQuestions() {
     setState(() {
-      activeScreen = 'questions-screen';
+      activeScreen = ActiveScreen.questions;
     });
   }
 
-  void restartScreen() {
+  void restartQuiz() {
     setState(() {
-      activeScreen = 'start-screen';
       selectedAnswers = [];
+      activeScreen = ActiveScreen.start;
     });
   }
 
   void chooseAnswer(String answer) {
-    selectedAnswers.add(answer);
-    if (selectedAnswers.length == questions.length) {
-      setState(() {
-        // selectedAnswers = [];
-        activeScreen = 'results-screen';
-      });
-    }
+    setState(() {
+      selectedAnswers = [...selectedAnswers, answer];
+
+      if (selectedAnswers.length == questions.length) {
+        activeScreen = ActiveScreen.results;
+      }
+    });
   }
 
   @override
-  Widget build(context) {
-    // final screenWidget = activeScreen == 'start-screen'
-    //     ? StartScreen(switchScreen)
-    //     : QuestionsScreen(chooseAnswer);
+  Widget build(BuildContext context) {
+    Widget screenWidget;
 
-    Widget screenWidget = StartScreen(switchScreen);
-
-    if (activeScreen == 'questions-screen') {
-      screenWidget = QuestionsScreen(
-        chooseAnswer,
-      );
-    }
-
-    if (activeScreen == 'results-screen') {
-      screenWidget = ResultsScreen(selectedAnswers, restartScreen);
+    switch (activeScreen) {
+      case ActiveScreen.start:
+        screenWidget = StartScreen(switchToQuestions);
+        break;
+      case ActiveScreen.questions:
+        screenWidget = QuestionsScreen(chooseAnswer);
+        break;
+      case ActiveScreen.results:
+        screenWidget = ResultsScreen(selectedAnswers, restartQuiz);
+        break;
     }
 
     return MaterialApp(
+      title: 'Quiz App',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: screenWidget,
         backgroundColor: const Color.fromARGB(255, 93, 4, 134),
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: screenWidget,
+        ),
       ),
     );
   }

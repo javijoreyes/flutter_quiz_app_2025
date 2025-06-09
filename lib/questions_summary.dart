@@ -8,74 +8,72 @@ class QuestionsSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 400,
-      child: SingleChildScrollView(
-        child: Column(
-          children: summaryData.map((data) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(right: 15),
-                  width: 30,
-                  height: 30,
-                  padding: const EdgeInsets.only(top: 4),
-                  decoration: BoxDecoration(
-                      color: data['user_answer'] == data['correct_answer']
-                          ? const Color.fromARGB(255, 64, 164, 231)
-                          : const Color.fromARGB(255, 242, 124, 247),
-                      borderRadius: BorderRadius.circular(17)),
-                  child: Text(
-                    ((data['question_index'] as int) + 1).toString(),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        children:
+            summaryData.map((data) {
+              final isCorrect = data['user_answer'] == data['correct_answer'];
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.only(right: 16),
+                      decoration: BoxDecoration(
+                        color:
+                            isCorrect
+                                ? const Color.fromARGB(255, 64, 164, 231)
+                                : const Color.fromARGB(255, 242, 124, 247),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        ((data['question_index'] as int) + 1).toString(),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data['question'] as String,
+                            style: GoogleFonts.lato(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Tu respuesta: ${data['user_answer']}',
+                            style: GoogleFonts.lato(
+                              color: const Color.fromARGB(255, 208, 147, 248),
+                              fontSize: 15,
+                            ),
+                          ),
+                          Text(
+                            'Respuesta correcta: ${data['correct_answer']}',
+                            style: GoogleFonts.lato(
+                              color: const Color.fromARGB(255, 147, 182, 248),
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        data['question'] as String,
-                        style: GoogleFonts.lato(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        data['user_answer'] as String,
-                        style: GoogleFonts.lato(
-                          color: const Color.fromARGB(255, 208, 147, 248),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        data['correct_answer'] as String,
-                        style: GoogleFonts.lato(
-                          color: const Color.fromARGB(255, 147, 182, 248),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
+              );
+            }).toList(),
       ),
     );
   }
